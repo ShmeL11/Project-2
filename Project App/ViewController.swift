@@ -22,6 +22,8 @@ class ProjectsViewController: UIViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
+        
+        
     }()
     
     override func viewDidLoad() {
@@ -34,25 +36,32 @@ class ProjectsViewController: UIViewController {
     }
     
     func setupNavigationBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addProject))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(showAlert))
+        
     }
-    @objc func addProjecto() {
+    @objc func showAlert() {
         let alertController = UIAlertController(title: "New Project", message: "Enter project name", preferredStyle: .alert)
+        
         alertController.addTextField { textField in
             textField.placeholder = "Project name"
+            
         }
         
         let addAction = UIAlertAction(title: "Add", style: .default) { _ in
             if let projectName = alertController.textFields?.first?.text {
                 self.addProject(name: projectName)
+                
             }
         }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
         
+        
         alertController.addAction(addAction)
         alertController.addAction(cancelAction)
         
+        
         present(alertController, animated: true)
+        
         
     }
     
@@ -60,7 +69,10 @@ class ProjectsViewController: UIViewController {
         let project = Project(name: name)
         projects.append(project)
         tableView.reloadData()
+        
     }
+    
+   
     
     func setupTableView() {
         view.addSubview(tableView)
@@ -75,22 +87,31 @@ class ProjectsViewController: UIViewController {
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
         ])
         
-        tableView.register(UITableView.self, forCellReuseIdentifier: "Cell")
+        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "Cell")
+        
     }
 }
 
 extension ProjectsViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let nextVC = NextViewController()
+        navigationController?.pushViewController(nextVC, animated: true)
+    }
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
         return projects.count
+        
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let project = projects[indexPath.row]
-        cell.textLabel?.text = project.name
-        return cell 
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+            let project = projects[indexPath.row]
+            cell.textLabel?.text = project.name
+            return cell
+        }
+    
     }
-}
 
 // Usage
 let viewController = ProjectsViewController()
